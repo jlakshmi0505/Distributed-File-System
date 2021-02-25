@@ -1,0 +1,245 @@
+syntax = "proto3";
+option java_package = "edu.usfca.cs.chat";
+
+/* Regular chat message with username + message */
+message ChatMessage {
+  string username = 1;
+  string messageBody = 2;
+}
+
+message ClientRegistration {
+  string username = 1;
+}
+
+message SNRegistration {
+  string hostName = 1;
+  int32 port = 2;
+  string id = 3;
+}
+
+message Heartbeat {
+  double freeSpaceAvailable = 1;
+  int64 requestsProcessedCount = 2;
+}
+
+// client -> SN file content msg on write / SN -> client file content msg on read
+message FileContent {
+  string filePath = 1;
+  bytes  fileContent = 2;
+  int32  chunkOrder = 3;
+  int64  checksum = 4;
+  int32  numChunks = 5;
+  string fileType = 6;
+  string parent = 7;
+  string fileOps = 8;
+}
+
+// client -> controller write request
+message FileWriteRequest {
+  string sourceFilePath = 1;
+  string destFilePath = 2;
+  double fileSize = 3;
+  double chunkSize = 4;
+  int64  numChunks = 5;
+}
+
+
+// controller -> client SN info on write/read request
+message StorageNodeMeta {
+  message StorageNode {
+    string url = 1;
+    int32  port = 2;
+    double freeSpaceAvailable = 3;
+    string id = 4;
+    FileReplicaLocation replicas = 5;
+    int32 chunkOrder = 6;
+  }
+  repeated StorageNode storageNodes = 1;
+  oneof request {
+    FileWriteRequest fileWriteRequest = 2;
+    FileReadRequest fileReadRequest = 3;
+  }
+  string msg = 4;
+}
+
+// client -> controller read request
+message FileReadRequest{
+  string sourceFilePath = 1;
+  string destFilePath = 2;
+  string opType = 3;
+}
+
+// controller -> client read error / SN -> client checksum error & no replica
+message Error{
+  string errorReason = 1;
+  string errorType = 2;
+  string filePath = 3;
+  string sourcePath = 4;
+  string destFilePath = 5;
+}
+
+// client -> SN file read
+message FileRead{
+  string sourcePath = 1;
+  string destPath = 2;
+  int32 totalStorageNodes = 3;
+}
+
+// SN -> Controller on write success
+message FileWriteAck{
+  string filePath = 1;
+}
+
+message DeleteChunksReq {
+    string filePath = 1;
+    string sourcePath = 2;
+}
+
+message DeleteChunksResp {
+    string filePath = 1;
+    string sourcePath = 2;
+    int32 success = 3;
+}
+
+// controller -> SN replica location
+message FileReplicaLocation {
+  message StorageNodeReplica {
+    string url = 1;
+    int32  port = 2;
+  }
+  repeated StorageNodeReplica storageNodeReplica = 1;
+}
+
+// Primary SN -> Secondary SN on checksum error
+message FileReplicaRead {
+  string sourcePath = 1;
+  string destPath = 2;
+  int32  chunkOrder = 3;
+  int64  checksum = 4;
+  int32  numChunks = 5;
+}
+
+// Secondary SN to Primary SN with the replica file content
+message ReplicaFileContent {
+  string sourcePath = 1;
+  string destPath = 2;
+  int32  chunkOrder = 3;
+  int64  checksum = 4;
+  int32  numChunks = 5;
+  bytes  fileContent = 6;
+}
+
+message ReaddirRequest {
+    string path = 1;
+}
+
+message ReaddirResponse {
+    int32 status = 1;
+    repeated string contents = 2;
+}
+
+message GetattrRequest {
+    string path = 1;
+}
+
+message GetattrResponse {
+    int32 status = 1;
+    int32 mode = 2;
+    int64 size = 3;
+}
+
+message OpenRequest {
+    string path = 1;
+}
+
+message OpenResponse {
+    int32 status = 1;
+}
+
+message ReadRequest {
+    string path = 1;
+    int64 size = 2;
+    int64 offset = 3;
+}
+
+message ReadResponse {
+    int32 status = 1;
+    bytes contents = 2;
+}
+
+
+// SN -> Client when file doesn't exist
+message NoFileContent{
+  string destPath = 1;
+  int32  totalStorageNodes = 2;
+}
+
+// client -> Controller on active nodes or ls info
+message RequestInfo{
+  string infoType = 1;
+}
+
+message ActiveNodesInfo{
+  int32 numActiveNodes = 1;
+  message NodeInfo {
+    string id = 1;
+    Heartbeat info = 2;
+  }
+  repeated  NodeInfo nodeInfo = 2;
+}
+
+// controller -> client file system tree
+message FileTreeInfo{
+  string fileTree = 1;
+}
+
+message CopyReplica {
+  string hostName = 1;
+  int32 port = 2;
+  string parentId = 3;
+  string fileType = 4;
+}
+
+message DeleteReplica{
+  string hostName = 1;
+  int32 port = 2;
+  string parentId = 3;
+  string fileType = 4;
+  string filePath = 5;
+}
+
+
+message ChatMessagesWrapper {
+  oneof msg {
+    ChatMessage chatMessage = 1;
+    ClientRegistration registration = 2;
+    FileWriteRequest fileWriteRequest = 3;
+    FileContent fileContent = 4;
+    StorageNodeMeta storageNodeMeta = 5;
+    Error error = 6;
+    FileReadRequest fileReadRequest = 7;
+    FileRead fileRead = 8;
+    Heartbeat heartbeat = 9;
+    FileWriteAck fileWriteAck = 10;
+    SNRegistration storageNodeRegistration = 11;
+    FileReplicaLocation fileReplicaLocation = 12;
+    FileReplicaRead fileReplicaReadRequest = 13;
+    ReplicaFileContent replicaFileContent = 14;
+    NoFileContent noFileContent = 15;
+    DeleteChunksReq deleteChunksReq = 16;
+    DeleteChunksResp deleteChunksResp = 17;
+    ReaddirRequest  readdir_req  = 18;
+    ReaddirResponse readdir_resp = 19;
+    GetattrRequest  getattr_req  = 20;
+    GetattrResponse getattr_resp = 21;
+    OpenRequest     open_req     = 22;
+    OpenResponse    open_resp    = 23;
+    ReadRequest     read_req     = 24;
+    ReadResponse    read_resp    = 25;
+    RequestInfo requestInfo = 26;
+    ActiveNodesInfo activeNodesInfo = 27;
+    CopyReplica copyReplica = 28;
+    DeleteReplica deleteReplica = 29;
+    FileTreeInfo fileTreeInfo = 30;
+  }
+}
