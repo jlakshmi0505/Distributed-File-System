@@ -10,14 +10,15 @@ Built a distributed file system (DFS) based on the technologiesfrom Amazon, Goog
 ### Asynchronous Scalability: we will use non-blocking I/O to ensure your DFS can scale to handle hundreds of active client connections concurrently.
 ### Fault tolerance: your system must be able to detect and withstand two concurrent storage node failures and continue operating normally. It will also be able to recover corrupted files.
 
-Your implementation must be done in Java (unless otherwise arranged with the professor), and we will test it using the orion cluster here in the CS department. Communication between components must be implemented via sockets (not RMI, RPC or similar technologies) and you may not use any external libraries other than those explicitly stated in the project spec.
-
 ## Components:
 
 Controller
 Storage Node
 Client
-Controller
+
+
+
+## Controller
 
 The Controller is responsible for managing resources in the system, somewhat like an HDFS NameNode. When a new storage node joins your DFS, the first thing it does is contact the Controller. At a minimum, the Controller contains the following data structures:
 
@@ -31,14 +32,14 @@ To maintain the per-directory routing table, you will implement a bloom filter o
 
 The Controller is also responsible for detecting storage node failures and ensuring the system replication level is maintained. In your DFS, every chunk will be replicated twice for a total of 3 duplicate chunks. This means if a system goes down, you can re-route retrievals to a backup copy. You’ll also maintain the replication level by creating more copies in the event of a failure. You will need to design an algorithm for determining replica placement.
 
-Storage Node
+## Storage Node
 Storage nodes are responsible for storing and retrieving file chunks. When a chunk is stored, it will be checksummed so on-disk corruption can be detected. When a corrupted file is retrieved, it should be repaired by requesting a replica before fulfilling the client request. Metadata, such as checksums, should be stored alongside the files on disk.
 
 The storage nodes will send a heartbeat to the controller periodically to let it know that they are still alive. Every 5 seconds is a good interval for sending these. The heartbeat contains the free space available at the node and the total number of requests processed (storage, retrievals, etc.).
 
 On startup: provide a storage directory path and the hostname/IP of the controller. Any old files present in the storage directory should be removed.
 
-Basic Client
+## Basic Client
 You will build a basic client that allows storage and retrievals. Its functions include:
 
 Breaking files into chunks, asking the controller where to store them, and then sending them to the appropriate storage node(s).
