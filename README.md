@@ -52,7 +52,7 @@ POSIX Client
 This client implements a POSIX-compatible file system via FUSE. It receives file system instructions from the FUSE library and translates them to messages your DFS can understand. This will allow you to mount your DFS just as you would a flash drive, hard disk drive, etc.
 
 
-##Controller
+## Controller
 
  File system tree
 Directory routing table (Bloom Filter implementation and lookup functionality)
