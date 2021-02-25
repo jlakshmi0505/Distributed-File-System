@@ -3,12 +3,13 @@ Built a distributed file system (DFS) based on the technologiesfrom Amazon, Goog
 
 ## Key features include:
 
-POSIX Compatibility: unlike many other DFS, ours will be POSIX-compatible, meaning that the file system can be mounted like any other disk on the host operating system.
-Probabilistic Routing: to enable lookups without requiring excessive RAM, client requests will be routed probabilistically to relevant storage nodes via bloom filters.
-Parallel retrievals: large files will be split into multiple chunks. Client applications retrieve these chunks in parallel using threads.
-Interoperability: the DFS will use Google Protocol Buffers to serialize messages. Do not use Java serialization. This allows other applications to easily implement your wire format.
-Asynchronous Scalability: we will use non-blocking I/O to ensure your DFS can scale to handle hundreds of active client connections concurrently.
-Fault tolerance: your system must be able to detect and withstand two concurrent storage node failures and continue operating normally. It will also be able to recover corrupted files.
+### POSIX Compatibility: unlike many other DFS, ours will be POSIX-compatible, meaning that the file system can be mounted like any other disk on the host operating system.
+### Probabilistic Routing: to enable lookups without requiring excessive RAM, client requests will be routed probabilistically to relevant storage nodes via bloom filters.
+### Parallel retrievals: large files will be split into multiple chunks. Client applications retrieve these chunks in parallel using threads.
+### Interoperability: the DFS will use Google Protocol Buffers to serialize messages. Do not use Java serialization. This allows other applications to easily implement your wire format.
+### Asynchronous Scalability: we will use non-blocking I/O to ensure your DFS can scale to handle hundreds of active client connections concurrently.
+### Fault tolerance: your system must be able to detect and withstand two concurrent storage node failures and continue operating normally. It will also be able to recover corrupted files.
+
 Your implementation must be done in Java (unless otherwise arranged with the professor), and we will test it using the orion cluster here in the CS department. Communication between components must be implemented via sockets (not RMI, RPC or similar technologies) and you may not use any external libraries other than those explicitly stated in the project spec.
 
 ## Components:
