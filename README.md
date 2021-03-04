@@ -1,5 +1,5 @@
 # Distributed-File-System
-Built a distributed file system (DFS) based on the technologiesfrom Amazon, Google, and others. DFS will support multiple storage nodes responsible for managing data.
+Built a distributed file system (DFS) based on the technologies from Amazon, Google, and others. DFS will support multiple storage nodes responsible for managing data.
 
 ## Key features include:
 
